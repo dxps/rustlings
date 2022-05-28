@@ -4,14 +4,20 @@
 // It won't compile right now! Why?
 // Execute `rustlings hint errors5` for hints!
 
-// I AM NOT DONE
-
-use std::error;
+use std::error::{self, Error};
 use std::fmt;
 use std::num::ParseIntError;
 
 // TODO: update the return type of `main()` to make this compile.
-fn main() -> Result<(), ParseIntError> {
+
+// My Notes:
+// 1. Updating the return type of `main()` to have `Box<dyn Error>`
+//    in the error part of the `Result` is the easiest option.
+//    This is the one included here (in the `main()`'s signature).
+// 2. Another option is to keep its original `ParseIntError`
+//    and have `CreationError` to implement the `From::from` trait.
+//    This is also included, for demo purposes.
+fn main() -> Result<(), Box<dyn Error>> {
     let pretend_user_input = "42";
     let x: i64 = pretend_user_input.parse()?;
     println!("output={:?}", PositiveNonzeroInteger::new(x)?);
@@ -27,6 +33,7 @@ struct PositiveNonzeroInteger(u64);
 enum CreationError {
     Negative,
     Zero,
+    NaN,
 }
 
 impl PositiveNonzeroInteger {
@@ -34,7 +41,7 @@ impl PositiveNonzeroInteger {
         match value {
             x if x < 0 => Err(CreationError::Negative),
             x if x == 0 => Err(CreationError::Zero),
-            x => Ok(PositiveNonzeroInteger(x as u64))
+            x => Ok(PositiveNonzeroInteger(x as u64)),
         }
     }
 }
@@ -45,9 +52,16 @@ impl fmt::Display for CreationError {
         let description = match *self {
             CreationError::Negative => "number is negative",
             CreationError::Zero => "number is zero",
+            CreationError::NaN => "not a number",
         };
         f.write_str(description)
     }
 }
 
 impl error::Error for CreationError {}
+
+impl From<ParseIntError> for CreationError {
+    fn from(_e: ParseIntError) -> Self {
+        CreationError::NaN
+    }
+}
