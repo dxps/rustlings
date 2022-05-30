@@ -1,19 +1,29 @@
 // iterators2.rs
+//
 // In this exercise, you'll learn some of the unique advantages that iterators
 // can offer. Follow the steps to complete the exercise.
 // As always, there are hints if you execute `rustlings hint iterators2`!
 
-// I AM NOT DONE
+// TODO: @dxps It works, but check for beter solutions.
 
 // Step 1.
 // Complete the `capitalize_first` function.
 // "hello" -> "Hello"
 pub fn capitalize_first(input: &str) -> String {
     let mut c = input.chars();
+    let mut res = String::new();
     match c.next() {
-        None => String::new(),
-        Some(first) => ???,
-    }
+        None => return res,
+        Some(first) => {
+            let s = match first.is_uppercase() {
+                true => first.to_string(),
+                false => format!("{}", first.to_uppercase()),
+            };
+            res.push_str(s.as_str());
+            res.push_str(&input[1..]);
+            return res;
+        }
+    };
 }
 
 // Step 2.
@@ -21,7 +31,7 @@ pub fn capitalize_first(input: &str) -> String {
 // Return a vector of strings.
 // ["hello", "world"] -> ["Hello", "World"]
 pub fn capitalize_words_vector(words: &[&str]) -> Vec<String> {
-    vec![]
+    words.iter().map(|word| capitalize_first(word)).collect()
 }
 
 // Step 3.
@@ -29,7 +39,7 @@ pub fn capitalize_words_vector(words: &[&str]) -> Vec<String> {
 // Return a single string.
 // ["hello", " ", "world"] -> "Hello World"
 pub fn capitalize_words_string(words: &[&str]) -> String {
-    String::new()
+    words.iter().map(|word| capitalize_first(*word)).collect()
 }
 
 #[cfg(test)]
