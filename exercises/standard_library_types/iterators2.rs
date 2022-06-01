@@ -11,19 +11,10 @@
 // "hello" -> "Hello"
 pub fn capitalize_first(input: &str) -> String {
     let mut c = input.chars();
-    let mut res = String::new();
     match c.next() {
-        None => return res,
-        Some(first) => {
-            let s = match first.is_uppercase() {
-                true => first.to_string(),
-                false => format!("{}", first.to_uppercase()),
-            };
-            res.push_str(s.as_str());
-            res.push_str(&input[1..]);
-            return res;
-        }
-    };
+        None => String::new(),
+        Some(first) => first.to_string().to_uppercase() + c.as_str(),
+    }
 }
 
 // Step 2.
